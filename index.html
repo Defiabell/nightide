@@ -79,6 +79,28 @@
       #hud .difficulty-btn:hover { background: #2a2248; }
       #hud .difficulty-btn.active { background: #2e2350; border-color: #7a5ad8; color: #e8dcff; }
       #hud .difficulty-hint { flex-basis: 100%; display: none; color: #ffd76e; font-size: 11px; text-align: center; }
+      /* V4f-10 L2 (light command client, docs/plans/nightide/2026-07-21-light-command-design.md
+         §3): 阵型 (stance) row — 集结/进攻/防守, same pill-button family as .difficulty-row above
+         but placed near the top (goldRow tier, not tucked in ☰ 菜单) since a stance change is a
+         mid-match action the player reaches for often, unlike difficulty (next-match only). No
+         `.active` state is ever set from a click here — it's a pure read of the running match's
+         `state.command[0].stance` (see `hud.ts`'s `stanceButtons` doc comment). */
+      #hud .stance-row { display: flex; align-items: center; flex-wrap: wrap; gap: 4px; }
+      #hud .stance-label { color: #9aa3c9; font-size: 12px; margin-right: 2px; }
+      #hud .stance-btn { flex: 1; padding: 5px 4px; font-size: 12px; text-align: center; background: #201a3a; color: #9aa3c9; border: 1px solid #3a3a5a; border-radius: 6px; }
+      #hud .stance-btn:hover { background: #2a2248; }
+      #hud .stance-btn.active { background: #2e2350; border-color: #7a5ad8; color: #e8dcff; }
+      #hud .stance-btn:disabled { opacity: 0.35; cursor: default; }
+      /* 「设集结点」 toggle — same placement-mode family as .demolish-btn, but its own warm
+         gold/amber hue matching the on-board rally flag (`RALLY_FLAG_COLOR` in BattleScene.ts, the
+         same hue as `.gold-row`/`OWN_HALF_TINT[0]`), so the button and the flag it controls read
+         as the same feature. */
+      #hud .rally-pick-btn { padding: 8px; background: #3a2e14; color: #ffcf6e; border: 1px solid #7a5a24; border-radius: 6px; cursor: pointer; font-size: 13px; text-align: center; }
+      #hud .rally-pick-btn:hover { background: #4a3a1c; }
+      #hud .rally-pick-btn.active { background: #d8a03c; color: #1a1406; border-color: #ffd76e; }
+      #hud .rally-pick-btn:disabled { opacity: 0.35; cursor: default; }
+      /* Cursor hint while picking a rally cell — mirrors #game.ability-targeting's own rule. */
+      #game.rally-picking canvas { cursor: crosshair; }
       /* M2d Task (天梯): "守夜人 1063" style rating readout + match-end delta line. */
       #hud .ladder-row { font-size: 13px; color: #ffd76e; font-weight: 600; letter-spacing: 0.5px; }
       #hud .ladder-delta-row { font-size: 13px; font-weight: 600; padding: 4px 8px; border-radius: 6px; text-align: center; }
@@ -184,7 +206,7 @@
       #nightide-history-panel .history-delta { text-align: right; }
       #nightide-history-panel .history-badges { color: #ffd76e; font-size: 11px; text-align: right; }
     </style>
-    <script type="module" crossorigin src="./assets/index-DazWzvJL.js"></script>
+    <script type="module" crossorigin src="./assets/index-BjrUjhcu.js"></script>
   </head>
   <body>
     <div id="app">
