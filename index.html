@@ -25,10 +25,19 @@
          `width` to the canvas's exact pixel width (`boardPixelSize`) so the bar spans the board
          edge-to-edge — with the default `content-box`, that width would exclude this rule's own
          padding/border and the bar would overhang the canvas on both sides. */
-      #topbar { box-sizing: border-box; position: relative; display: flex; align-items: center; gap: 14px; flex-wrap: wrap; padding: 10px 16px; background: #12101f; border: 1px solid #4a3a7a; border-radius: 8px; }
+      /* HUD redesign v2: two stacked rows — row 1「整体」(buttons + difficulty + 天梯 + timer),
+         row 2「战局」(你 vs 对手 live stats). Column layout; each `.topbar-row` is its own flex row. */
+      #topbar { box-sizing: border-box; position: relative; display: flex; flex-direction: column; align-items: stretch; gap: 8px; padding: 10px 16px; background: #12101f; border: 1px solid #4a3a7a; border-radius: 8px; }
+      #topbar .topbar-row { display: flex; align-items: center; gap: 12px; flex-wrap: wrap; }
+      /* Row 1 sits above a hairline divider so the「整体」frame reads as distinct from the「战局」
+         stats below it. `position: relative` so the ☰ `menu-dropdown` (a child of row 1) anchors its
+         `top: 100%` to row 1 alone, opening right under the ☰ button rather than below both rows. */
+      #topbar .topbar-row-meta { position: relative; padding-bottom: 8px; border-bottom: 1px solid #2a2350; }
       /* The five status readouts share one flex group so the vertical divider rule below can target
          them without also drawing a line next to the ☰ 菜单 button (a different visual family). */
-      #topbar .topbar-stats { display: flex; align-items: center; flex-wrap: wrap; gap: 0; }
+      /* Row 2「战局」: inherits display:flex/align/wrap from `.topbar-row`; only overrides gap to 0
+         because its `> div` children draw their own border-left dividers instead of using gap. */
+      #topbar .topbar-stats { gap: 0; }
       #topbar .topbar-stats > div { padding: 0 14px; border-left: 1px solid #2a2350; white-space: nowrap; }
       #topbar .topbar-stats > div:first-child { border-left: none; padding-left: 0; }
       /* Task (the lantern menu) requirement 3: safety net for short viewports — #hud itself
@@ -150,23 +159,23 @@
       #hud .rally-pick-btn:disabled { opacity: 0.35; cursor: default; }
       /* Cursor hint while picking a rally cell — mirrors #game.ability-targeting's own rule. */
       #game.rally-picking canvas { cursor: crosshair; }
-      /* M2d Task (天梯): "守夜人 1063" style rating readout + match-end delta line. */
-      #hud .ladder-row { font-size: 13px; color: #ffd76e; font-weight: 600; letter-spacing: 0.5px; }
+      /* M2d Task (天梯): "守夜人 1063" style rating readout + match-end delta line. HUD redesign v2:
+         the persistent rating readout moved to topbar row 1「整体」; the match-end delta stays in `#hud`. */
+      #topbar .ladder-row { font-size: 13px; color: #ffd76e; font-weight: 600; letter-spacing: 0.5px; white-space: nowrap; }
       #hud .ladder-delta-row { font-size: 13px; font-weight: 600; padding: 4px 8px; border-radius: 6px; text-align: center; }
       #hud .ladder-delta-row.positive { color: #7ce0a0; background: #16281c; }
       #hud .ladder-delta-row.negative { color: #ff8a8a; background: #2a1414; }
       /* M2d Task (托管): "守灯人代打中…" badge, shown while the steward is in control. */
       #hud .takeover-badge { font-size: 12px; color: #ffd76e; background: #2a2210; border: 1px solid #7a6a34; border-radius: 6px; padding: 5px 8px; text-align: center; }
-      /* V2e hero abilities (M2e-3 client): 灯辉 energy bar — a glowing worldview-toned meter,
-         distinct from the plain progress-row/timer-row text rows. HUD redesign: moved into
-         `#topbar` alongside the other readouts; `width` is now fixed (rather than `flex: 1`
-         soaking up an entire 200px column) so the track reads as a consistent-size gauge sitting
-         beside its topbar siblings instead of stretching to fill leftover horizontal space. */
-      #topbar .lamplight-row { display: flex; align-items: center; gap: 6px; font-size: 12px; color: #ffd76e; width: 150px; flex-shrink: 0; }
-      #topbar .lamplight-label { flex-shrink: 0; font-weight: 600; letter-spacing: 1px; }
-      #topbar .lamplight-track { flex: 1; height: 8px; background: #241a08; border: 1px solid #7a6a34; border-radius: 4px; overflow: hidden; }
-      #topbar .lamplight-fill { height: 100%; width: 0%; background: linear-gradient(90deg, #d8a03c, #ffe38a); box-shadow: 0 0 8px rgba(255, 215, 110, 0.75); transition: width 0.15s linear; }
-      #topbar .lamplight-value { flex-shrink: 0; font-variant-numeric: tabular-nums; color: #cfd4ea; }
+      /* V2e hero abilities (M2e-3 client): 灯辉 energy bar — a glowing worldview-toned meter. HUD
+         redesign v2 (user feedback: put 灯辉 next to the abilities): moved out of `#topbar` to the
+         bottom of `#hud`, directly above the ability bar, so the player watches the meter fill right
+         where the cast buttons are. Fills the full 200px `#hud` column (`flex: 1` track). */
+      #hud .lamplight-row { display: flex; align-items: center; gap: 6px; font-size: 12px; color: #ffd76e; }
+      #hud .lamplight-label { flex-shrink: 0; font-weight: 600; letter-spacing: 1px; }
+      #hud .lamplight-track { flex: 1; height: 8px; background: #241a08; border: 1px solid #7a6a34; border-radius: 4px; overflow: hidden; }
+      #hud .lamplight-fill { height: 100%; width: 0%; background: linear-gradient(90deg, #d8a03c, #ffe38a); box-shadow: 0 0 8px rgba(255, 215, 110, 0.75); transition: width 0.15s linear; }
+      #hud .lamplight-value { flex-shrink: 0; font-variant-numeric: tabular-nums; color: #cfd4ea; }
       /* V2e hero abilities (M2e-3 client): the hero ability bar — a distinct glowing "ready" state
          once affordable (lamplight[0] >= cost), dimmed otherwise; `.targeting` marks the ability
          currently awaiting a board click. */
@@ -277,7 +286,7 @@
       #nightide-history-panel .history-delta { text-align: right; }
       #nightide-history-panel .history-badges { color: #ffd76e; font-size: 11px; text-align: right; }
     </style>
-    <script type="module" crossorigin src="./assets/index-B3qO38SN.js"></script>
+    <script type="module" crossorigin src="./assets/index-DJTl9gUj.js"></script>
   </head>
   <body>
     <div id="app">
