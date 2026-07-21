@@ -143,15 +143,34 @@
         from { opacity: 1; transform: translateY(0); }
         to { opacity: 0; transform: translateY(-18px); }
       }
-      /* M2c 潮汐警报: dramatic "夜潮将至！" banner overlaid on the battlefield (#game), shown on
-         tideWarning — see ui/tideAlert.ts's TideAlert. Dark-red, fades in/out over ~2s. */
-      #nightide-tide-banner { position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); font-size: 34px; font-weight: 800; letter-spacing: 3px; color: #ff3344; text-shadow: 0 0 18px rgba(255, 51, 68, 0.85), 0 2px 4px #1a0006; pointer-events: none; opacity: 0; z-index: 15; white-space: nowrap; }
+      /* M2c 潮汐警报 / V4g-E3 (night-tide event banners): a single shared banner overlaid on the
+         battlefield (#game) for BOTH tideWarning ("夜潮将至！") and the 3 nightEvent kinds — see
+         ui/tideAlert.ts's TideAlert + nightEventBanner.ts's copy/class lookup. Color/text-shadow
+         live on the per-kind `.kind-*` class (not this base rule) so each event reads distinctly;
+         fade-in/out timing/shape is shared via the same `tide-banner-fade` animation. */
+      #nightide-tide-banner { position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); font-size: 34px; font-weight: 800; letter-spacing: 3px; pointer-events: none; opacity: 0; z-index: 15; white-space: nowrap; }
       #nightide-tide-banner.tide-banner-show { animation: tide-banner-fade 2s ease-in-out; }
+      /* tideWarning: the pre-existing dark-red treatment, unchanged. */
+      #nightide-tide-banner.kind-tideWarning { color: #ff3344; text-shadow: 0 0 18px rgba(255, 51, 68, 0.85), 0 2px 4px #1a0006; }
+      /* beastSurge: cool cyan-blue, echoing WILD_TINT (BattleScene.ts) — "the tide itself surges". */
+      #nightide-tide-banner.kind-beastSurge { color: #35c9ff; text-shadow: 0 0 18px rgba(53, 201, 255, 0.85), 0 2px 4px #04121a; }
+      /* quake: earthy fire-orange, echoing the forest-fire sweep fx's palette (effects.ts) — "the
+         ground itself is splitting". */
+      #nightide-tide-banner.kind-quake { color: #ff8a3d; text-shadow: 0 0 18px rgba(255, 138, 61, 0.85), 0 2px 4px #1a0e04; }
+      /* direSurge: the most ominous of the three (task brief) — larger, a deeper blood-red/violet,
+         and a slower, heavier pulse on top of the shared fade so it reads as genuinely dreadful
+         rather than merely "another banner". */
+      #nightide-tide-banner.kind-direSurge { font-size: 40px; letter-spacing: 5px; color: #ff2a55; text-shadow: 0 0 26px rgba(255, 20, 60, 0.95), 0 0 44px rgba(120, 0, 40, 0.7), 0 2px 6px #0a0004; }
+      #nightide-tide-banner.kind-direSurge.tide-banner-show { animation: tide-banner-fade 2s ease-in-out, dire-banner-pulse 0.5s ease-in-out 3; }
       @keyframes tide-banner-fade {
         0% { opacity: 0; transform: translate(-50%, -62%); }
         15% { opacity: 1; transform: translate(-50%, -50%); }
         80% { opacity: 1; transform: translate(-50%, -50%); }
         100% { opacity: 0; transform: translate(-50%, -44%); }
+      }
+      @keyframes dire-banner-pulse {
+        0%, 100% { text-shadow: 0 0 26px rgba(255, 20, 60, 0.95), 0 0 44px rgba(120, 0, 40, 0.7), 0 2px 6px #0a0004; }
+        50% { text-shadow: 0 0 40px rgba(255, 20, 60, 1), 0 0 70px rgba(120, 0, 40, 0.9), 0 2px 6px #0a0004; }
       }
       /* Pause overlay (single-player pause feature — see ui/pauseOverlay.ts): subtle dark overlay
          over the battlefield while paused. `pointer-events: none` is load-bearing — the canvas's
@@ -206,7 +225,7 @@
       #nightide-history-panel .history-delta { text-align: right; }
       #nightide-history-panel .history-badges { color: #ffd76e; font-size: 11px; text-align: right; }
     </style>
-    <script type="module" crossorigin src="./assets/index-J_GU0lBM.js"></script>
+    <script type="module" crossorigin src="./assets/index-BPP6bgJm.js"></script>
   </head>
   <body>
     <div id="app">
