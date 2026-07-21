@@ -114,6 +114,20 @@
       #topbar .difficulty-btn:hover { background: #2a2248; }
       #topbar .difficulty-btn.active { background: #2e2350; border-color: #7a5ad8; color: #e8dcff; }
       #topbar .difficulty-hint { flex-basis: 100%; display: none; color: #ffd76e; font-size: 11px; text-align: center; }
+      /* Difficulty visibility fix: the always-on top-bar badge showing THIS match's tier. Sits
+         between the ☰ button and the stats group. Tier-colored so 困难 vs 普通 is glanceable at a
+         distance (green=简单, neutral=普通, red-orange=困难); `.pending` (a queued next-match switch)
+         adds a dashed outline + the muted "下局→X" note. */
+      #topbar .topbar-difficulty { flex-shrink: 0; display: flex; align-items: center; gap: 6px; padding: 6px 10px; border-radius: 6px; font-size: 12px; color: #9aa3c9; border: 1px solid transparent; }
+      #topbar .topbar-difficulty b { font-size: 13px; font-weight: 600; }
+      #topbar .topbar-difficulty.tier-easy { background: #16240f; color: #9ecb7e; border-color: #3a5a28; }
+      #topbar .topbar-difficulty.tier-easy b { color: #c3e8a8; }
+      #topbar .topbar-difficulty.tier-normal { background: #17182c; color: #9aa3c9; border-color: #34365a; }
+      #topbar .topbar-difficulty.tier-normal b { color: #cfd4ea; }
+      #topbar .topbar-difficulty.tier-hard { background: #2c1410; color: #ffab8a; border-color: #7a3a2a; }
+      #topbar .topbar-difficulty.tier-hard b { color: #ffcbb3; }
+      #topbar .topbar-difficulty.pending { border-style: dashed; border-color: #ffd76e; }
+      #topbar .topbar-difficulty .pending-note { color: #ffd76e; font-size: 11px; }
       /* V4f-10 L2 (light command client, docs/plans/nightide/2026-07-21-light-command-design.md
          §3): 阵型 (stance) row — 集结/进攻/防守, same pill-button family as .difficulty-row above
          but placed near the top (goldRow tier, not tucked in ☰ 菜单) since a stance change is a
@@ -263,7 +277,7 @@
       #nightide-history-panel .history-delta { text-align: right; }
       #nightide-history-panel .history-badges { color: #ffd76e; font-size: 11px; text-align: right; }
     </style>
-    <script type="module" crossorigin src="./assets/index-CTMQeLFL.js"></script>
+    <script type="module" crossorigin src="./assets/index-B3qO38SN.js"></script>
   </head>
   <body>
     <div id="app">
