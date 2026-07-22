@@ -89,7 +89,16 @@
          button — same dark-card treatment as `.draft-panel` (both are event-driven popups at the
          top of `#hud`). 升级 reuses the warm gold family (`.rally-pick-btn.active`'s hue); 拆除
          reuses the old `.demolish-btn`'s red family; 取消 is a plain neutral button. */
-      #hud .building-panel { display: flex; flex-direction: column; gap: 6px; background: #17123a; border: 1px solid #4a3a7a; border-radius: 6px; padding: 8px; }
+      /* 建筑面板 UX (user feedback): floats next to the clicked building instead of sitting in the
+         right-side #hud column. `position: fixed` positions it against the viewport (no ancestor has
+         a persistent transform/filter, and #hud's `overflow-y: auto` does not clip fixed descendants),
+         so it stays a child of #hud in the DOM — no re-parenting, no duplicate-across-restart risk —
+         while `openBuildingPanel` sets left/top to the building's on-screen coordinates. */
+      /* z-index 12: above the game board (#game is z-index:auto) and #hud content, but deliberately
+         BELOW every modal overlay — tide banner (15), pause (16), surrender (20), history (30),
+         tooltip (1000) — so any of those always covers a still-open building panel instead of the
+         panel floating on top of a confirmation dialog. */
+      #hud .building-panel { position: fixed; z-index: 12; min-width: 168px; display: flex; flex-direction: column; gap: 6px; background: #17123a; border: 1px solid #4a3a7a; border-radius: 6px; padding: 8px; box-shadow: 0 6px 22px rgba(0, 0, 0, 0.55); }
       #hud .building-panel-title { font-size: 14px; font-weight: 600; color: #ffcf6e; text-align: center; }
       #hud .building-panel-note { font-size: 12px; color: #9aa3c9; text-align: center; }
       #hud .building-panel-upgrade-btn { padding: 8px; background: #3a2e14; color: #ffcf6e; border: 1px solid #7a5a24; border-radius: 6px; cursor: pointer; font-size: 13px; text-align: center; }
@@ -210,7 +219,6 @@
       #nightide-tooltip { position: fixed; z-index: 1000; pointer-events: none; background: #17123a; border: 1px solid #4a3a7a; border-radius: 6px; padding: 8px 10px; font-size: 12px; line-height: 1.6; color: #cfd4ea; max-width: 260px; box-shadow: 0 4px 14px rgba(0, 0, 0, 0.4); }
       #nightide-tooltip .tt-title { font-weight: 600; color: #ffcf6e; margin-bottom: 2px; }
       #nightide-tooltip .tt-desc { color: #9aa3c9; margin-bottom: 4px; }
-      #nightide-tooltip .tt-hint { color: #7ce0a0; margin-top: 4px; }
       #nightide-tooltip .tt-upgrade-title { color: #d8a03c; margin-top: 6px; font-weight: 600; }
       @keyframes card-shake {
         10%, 90% { transform: translateX(-2px); }
@@ -304,7 +312,7 @@
       #nightide-history-panel .history-delta { text-align: right; }
       #nightide-history-panel .history-badges { color: #ffd76e; font-size: 11px; text-align: right; }
     </style>
-    <script type="module" crossorigin src="./assets/index-BZuXEmXk.js"></script>
+    <script type="module" crossorigin src="./assets/index-Bc2Vxe9E.js"></script>
   </head>
   <body>
     <div id="app">
