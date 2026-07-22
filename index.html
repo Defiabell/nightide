@@ -32,14 +32,14 @@
       /* Row 1 sits above a hairline divider so the「整体」frame reads as distinct from the「战局」
          stats below it. `position: relative` so the ☰ `menu-dropdown` (a child of row 1) anchors its
          `top: 100%` to row 1 alone, opening right under the ☰ button rather than below both rows. */
-      #topbar .topbar-row-meta { position: relative; padding-bottom: 8px; border-bottom: 1px solid #2a2350; }
+      /* Row 2「战局」moved into #hud (user feedback: 与右侧战斗选项放一起便于看对局), so #topbar is now a
+         single row — drop the row-1/row-2 divider (padding-bottom/border-bottom), but KEEP
+         position:relative: it's the containing block the ☰ menu-dropdown anchors its `top:100%` to. */
+      #topbar .topbar-row-meta { position: relative; }
       /* The five status readouts share one flex group so the vertical divider rule below can target
          them without also drawing a line next to the ☰ 菜单 button (a different visual family). */
       /* Row 2「战局」: inherits display:flex/align/wrap from `.topbar-row`; only overrides gap to 0
          because its `> div` children draw their own border-left dividers instead of using gap. */
-      #topbar .topbar-stats { gap: 0; }
-      #topbar .topbar-stats > div { padding: 0 14px; border-left: 1px solid #2a2350; white-space: nowrap; }
-      #topbar .topbar-stats > div:first-child { border-left: none; padding-left: 0; }
       /* Task (the lantern menu) requirement 3: safety net for short viewports — #hud itself
          doesn't need this on a normal-height window (the menu collapsing the four old buttons
          into one is the primary space fix), but if content still exceeds the viewport this lets
@@ -55,26 +55,37 @@
       /* L1 每日速通挑战: match-end result line, same dark-card family as .memory-row — shown only
          on a winning challenge attempt (see Hud.showChallengeResult). */
       #hud .challenge-result-row { font-size: 13px; font-weight: 600; padding: 6px 8px; background: #1a1030; border: 1px solid #4a7a34; border-radius: 6px; text-align: center; color: #b9e8a0; }
-      /* HUD redesign: gold/兵力/灯辉/等级/剩余时间 now render inside `#topbar` (see above), not
-         `#hud` — these five selectors are scoped to their new parent below. `#hud .cards-row`
-         stays (the card bar remains the tallest thing in the leaner right column). */
-      #topbar .gold-row { font-size: 13px; color: #d8a03c; }
+      /* HUD redesign: 剩余时间 stays in `#topbar` (整体/框架 clock). The 战局 stats
+         (gold/材料/兵力/等级进度) moved into `#hud` (user feedback: 与右侧战斗选项放一起便于看对局),
+         so these four are UNSCOPED (no `#topbar` prefix) to keep their color/size in their new #hud
+         home. `.hud-stats` (below) is their new container. */
+      #hud .gold-row { font-size: 13px; color: #d8a03c; }
       /* 多资源经济 R6 (client material readouts, docs/plans/nightide/2026-07-22-multi-resource-
          economy-plan.md §6): YOUR wood/ore only — see `materialsRow`'s own doc comment in hud.ts.
          Wood-green/ore-slate tones, matching `effects.ts`'s existing `harvested` fx float-text
          colors (0x9ecb7e / 0xbfc7d6) so the readout and the harvest fx read as the same resource. */
-      #topbar .materials-row { font-size: 13px; }
-      #topbar .materials-row .material-wood { color: #9ecb7e; }
-      #topbar .materials-row .material-ore { color: #bfc7d6; }
+      #hud .materials-row { font-size: 13px; }
+      #hud .materials-row .material-wood { color: #9ecb7e; }
+      #hud .materials-row .material-ore { color: #bfc7d6; }
       /* V4f-3 (frontier client): unit-count/cap readout — same tier as .gold-row, distinct hue so
          it doesn't read as "more gold info". `.at-cap` flags when the LOCAL player has hit
          maxUnitsPerFaction (production silently paused) — warm/red like the building panel's own
          拆除 button palette below, so it reads as "attention", not just informational. */
-      #topbar .units-row { font-size: 13px; color: #9fd3ff; }
-      #topbar .units-row.at-cap { color: #ff8a8a; font-weight: 600; }
-      #topbar .progress-row { font-size: 12px; color: #9aa3c9; letter-spacing: 1px; }
+      #hud .units-row { font-size: 13px; color: #9fd3ff; }
+      #hud .units-row.at-cap { color: #ff8a8a; font-weight: 600; }
+      #hud .progress-row { font-size: 12px; color: #9aa3c9; letter-spacing: 1px; }
       #topbar .timer-row { font-size: 12px; color: #9aa3c9; letter-spacing: 0.5px; }
+      /* 战局 stat panel in #hud — the four rows stacked vertically (the 200px column can't lay them
+         out horizontally like the old topbar strip did), boxed like #hud's other panels so it reads
+         as one glanceable "对局情况" block sitting above the combat controls. */
+      #hud .hud-stats { display: flex; flex-direction: column; gap: 4px; padding: 8px; background: #12101f; border: 1px solid #4a3a7a; border-radius: 6px; }
       #hud .cards-row { display: flex; flex-direction: column; gap: 8px; }
+      /* 卡牌分类 (user feedback: 工厂建筑按类型分类): the card bar groups its building cards into
+         建设类/兵工厂类/防御军事类 sections, each a small muted header above its own button column.
+         An empty section (no owned cards of that category yet) is hidden by hud.ts. */
+      #hud .card-cat { display: flex; flex-direction: column; gap: 6px; }
+      #hud .card-cat-header { font-size: 11px; color: #7c86ad; letter-spacing: 1px; margin-top: 2px; }
+      #hud .card-cat-body { display: flex; flex-direction: column; gap: 8px; }
       #hud button { padding: 8px; background: #141a33; color: #cfd4ea; border: 1px solid #2a3155; border-radius: 6px; cursor: pointer; text-align: left; font-size: 13px; }
       #hud button:disabled { opacity: 0.35; cursor: default; }
       #hud button.selected { border-color: #d8a03c; color: #d8a03c; }
@@ -330,7 +341,7 @@
       #nightide-history-panel .history-delta { text-align: right; }
       #nightide-history-panel .history-badges { color: #ffd76e; font-size: 11px; text-align: right; }
     </style>
-    <script type="module" crossorigin src="./assets/index-wL7Mv5v3.js"></script>
+    <script type="module" crossorigin src="./assets/index-BODFC7MR.js"></script>
   </head>
   <body>
     <div id="app">
