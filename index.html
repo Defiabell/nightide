@@ -2,11 +2,27 @@
 <html>
   <head>
     <meta charset="utf-8" />
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover"
+    />
     <title>夜潮 Nightide — M1 战斗沙盒</title>
     <link rel="icon" href="data:," />
     <style>
-      body { margin: 0; background: #06070f; color: #cfd4ea; font-family: system-ui, sans-serif; display: flex; justify-content: center; }
-      #app { display: flex; gap: 16px; padding: 16px; align-items: flex-start; }
+      /* Mobile web (响应式适配): fill the viewport and clip; `#app` is center-pinned and scaled to
+         fit by `responsiveScale.ts` (transform set at runtime). The whole desktop layout (board +
+         right HUD) shrinks to fit any screen rather than reflowing — 宽横板 28×15 在竖屏会很小，
+         所以 landscape 体验最佳（见 #rotate-hint 提示）。 */
+      html, body { margin: 0; height: 100%; overflow: hidden; }
+      body { background: #06070f; color: #cfd4ea; font-family: system-ui, sans-serif; }
+      /* position:fixed + translate-center means CSS `scale()` on #app stays visually centered
+         regardless of its (un-scaled) layout box, so no scrollbars/overflow from the transform. */
+      #app { position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); transform-origin: center center; display: flex; gap: 16px; align-items: flex-start; }
+      /* 竖屏时的非阻挡提示（pointer-events:none，游戏在其下照常可玩），横屏自动消失。 */
+      #rotate-hint { display: none; }
+      @media (orientation: portrait) and (max-width: 900px) {
+        #rotate-hint { display: block; position: fixed; top: 6px; left: 50%; transform: translateX(-50%); z-index: 2000; pointer-events: none; font-size: 12px; color: #ffcf6e; background: rgba(23, 18, 58, 0.9); border: 1px solid #4a3a7a; border-radius: 6px; padding: 4px 10px; white-space: nowrap; }
+      }
       /* HUD redesign — two-zone layout (direct user feedback: "菜单和一些信息能不能放在游戏上方，
          所有的选项都放在右侧有点长，而且不好辨认"): `#battle-column` stacks the new `#topbar`
          (glanceable read-only status + the ☰ 菜单 button) directly above `#game`, so the two share
@@ -341,7 +357,7 @@
       #nightide-history-panel .history-delta { text-align: right; }
       #nightide-history-panel .history-badges { color: #ffd76e; font-size: 11px; text-align: right; }
     </style>
-    <script type="module" crossorigin src="./assets/index-D3Mun0UG.js"></script>
+    <script type="module" crossorigin src="./assets/index-KMrIirxN.js"></script>
   </head>
   <body>
     <div id="app">
@@ -351,5 +367,6 @@
       </div>
       <div id="hud"></div>
     </div>
+    <div id="rotate-hint">🔄 横屏体验更佳</div>
   </body>
 </html>
