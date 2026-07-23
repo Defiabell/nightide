@@ -37,6 +37,17 @@
       #nightide-mode-select .mode-select-btn { padding: 12px; background: #241a3a; color: #cfd4ea; border: 1px solid #4a3a7a; border-radius: 6px; cursor: pointer; font-size: 15px; font-weight: 600; }
       #nightide-mode-select .mode-select-btn:hover { background: #2e2350; }
       #nightide-mode-select .mode-select-defense { color: #ffb3b3; border-color: #7a3a3a; }
+      /* 战报分享卡预览浮层（Task 2, src/share/sharePanel.ts）：与 #nightide-mode-select 完全同款
+         的「挂 body + fixed inset:0 遮罩 + display:none 直到 .show」惯例，避免加载时闪现。 */
+      #nightide-share-panel { position: fixed; inset: 0; display: none; align-items: center; justify-content: center; background: rgba(6, 7, 15, 0.85); z-index: 1000; }
+      #nightide-share-panel.show { display: flex; }
+      #nightide-share-panel .share-panel-box { display: flex; flex-direction: column; align-items: stretch; gap: 12px; background: #17123a; border: 1px solid #4a3a7a; border-radius: 10px; padding: 20px; box-shadow: 0 10px 32px rgba(0, 0, 0, 0.55); max-height: 92vh; }
+      /* 卡面原生 750x1000——按视口高度等比缩放，宽度跟着走，避免小屏幕下溢出遮罩。 */
+      #nightide-share-panel .share-panel-img { display: block; max-width: min(78vw, 480px); max-height: 70vh; width: auto; height: auto; border-radius: 8px; align-self: center; }
+      #nightide-share-panel .share-panel-actions { display: flex; gap: 10px; justify-content: center; }
+      #nightide-share-panel .share-panel-btn { padding: 10px 18px; background: #241a3a; color: #cfd4ea; border: 1px solid #4a3a7a; border-radius: 6px; cursor: pointer; font-size: 14px; font-weight: 600; }
+      #nightide-share-panel .share-panel-btn:hover { background: #2e2350; }
+      #nightide-share-panel .share-panel-close { color: #ffb3b3; border-color: #7a3a3a; }
       /* HUD redesign — two-zone layout (direct user feedback: "菜单和一些信息能不能放在游戏上方，
          所有的选项都放在右侧有点长，而且不好辨认"): `#battle-column` stacks the new `#topbar`
          (glanceable read-only status + the ☰ 菜单 button) directly above `#game`, so the two share
@@ -393,7 +404,7 @@
       #nightide-history-panel .history-delta { text-align: right; }
       #nightide-history-panel .history-badges { color: #ffd76e; font-size: 11px; text-align: right; }
     </style>
-    <script type="module" crossorigin src="./assets/index-BHEc18zd.js"></script>
+    <script type="module" crossorigin src="./assets/index-DOeMfL46.js"></script>
   </head>
   <body>
     <div id="app">
