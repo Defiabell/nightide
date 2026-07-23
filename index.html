@@ -329,7 +329,9 @@
       #draft-modal-overlay .draft-modal-name { font-size: 13px; font-weight: 600; }
       #draft-modal-overlay .draft-modal-cost { font-size: 11px; color: #e8d9a0; }
       #draft-modal-overlay .draft-modal-detail { font-size: 10px; color: #9aa3c9; line-height: 1.5; text-align: left; }
-      /* 倒计时条：保留但天然冻结（modal 打开 = 已暂停，tick 不走），静态满格。 */
+      /* 倒计时条：2026-07-23 起是墙钟实时倒计时（用户反馈「抽卡暂停也要有时间限制」）——modal 打开
+         期间即使 sim 侧暂停冻着 tick，这条 width 仍由 draftModal.ts 的 performance.now() 计时器
+         每 ~100ms 实时收窄，到点自动选 index 0 并关闭 modal（CSS 数值不变，仅注释更新）。 */
       #draft-modal-overlay .draft-modal-bar { height: 4px; background: #241a3a; border-radius: 2px; margin-top: 12px; overflow: hidden; }
       #draft-modal-overlay .draft-modal-bar-fill { height: 100%; width: 100%; background: #d8a03c; }
       /* Brief CSS shake on the #game WRAPPER only (render-only, never the Phaser canvas's own
@@ -377,7 +379,7 @@
       #nightide-history-panel .history-delta { text-align: right; }
       #nightide-history-panel .history-badges { color: #ffd76e; font-size: 11px; text-align: right; }
     </style>
-    <script type="module" crossorigin src="./assets/index-FxqjDENT.js"></script>
+    <script type="module" crossorigin src="./assets/index-ByKny8YA.js"></script>
   </head>
   <body>
     <div id="app">
