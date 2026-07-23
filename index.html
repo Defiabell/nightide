@@ -101,24 +101,27 @@
          An empty section (no owned cards of that category yet) is hidden by hud.ts. */
       #hud .card-cat { display: flex; flex-direction: column; gap: 6px; }
       #hud .card-cat-header { font-size: 11px; color: #7c86ad; letter-spacing: 1px; margin-top: 2px; }
-      #hud .card-cat-body { display: flex; flex-direction: column; gap: 8px; }
+      #hud .card-cat-body { display: grid; grid-template-columns: repeat(3, 1fr); gap: 4px; }
+      /* HUD 改版第二节：卡牌网格图标按钮 —— 12 张卡从 12 整行压到 4 行网格，后期右列一屏放下。 */
+      #hud .card-icon-btn { position: relative; aspect-ratio: 1 / 1; display: flex; align-items: center; justify-content: center; padding: 2px; background: #1a1633; border: 1px solid #4a3a7a; border-radius: 6px; }
+      #hud .card-icon-btn .card-icon-img { width: 78%; height: 78%; object-fit: contain; pointer-events: none; }
+      #hud .card-icon-btn.unaffordable .card-cost-badge { color: #ff8a8a; }
+      #hud .card-icon-btn.selected { border-color: #ffd76e; box-shadow: 0 0 6px rgba(255, 215, 110, 0.5); }
+      #hud .card-cost-badge { position: absolute; right: 2px; bottom: 1px; font-size: 10px; color: #e8d9a0; text-shadow: 0 0 3px #000; pointer-events: none; }
+      #hud .card-tier-badge { position: absolute; left: 2px; top: 1px; font-size: 9px; color: #9fd3ff; pointer-events: none; }
+      #hud .card-icon-fallback { font-size: 12px; color: #cfd4ea; }
       #hud button { padding: 8px; background: #141a33; color: #cfd4ea; border: 1px solid #2a3155; border-radius: 6px; cursor: pointer; text-align: left; font-size: 13px; }
       #hud button:disabled { opacity: 0.35; cursor: default; }
       #hud button.selected { border-color: #d8a03c; color: #d8a03c; }
       #hud button.shake { animation: card-shake 0.3s ease-in-out; }
       #hud .rematch-btn { font-size: 15px; font-weight: 600; text-align: center; padding: 10px; background: #3a2a6a; color: #e8dcff; border: 1px solid #7a5ad8; border-radius: 6px; cursor: pointer; }
       #hud .rematch-btn:hover { background: #4a3585; }
-      #hud .draft-panel { display: flex; flex-direction: column; gap: 6px; background: #17123a; border: 1px solid #4a3a7a; border-radius: 6px; padding: 8px; }
-      #hud .draft-options { display: flex; gap: 6px; }
-      #hud .draft-options button { flex: 1; font-size: 12px; padding: 6px; text-align: center; }
-      #hud .draft-bar-track { height: 4px; background: #241a3a; border-radius: 2px; overflow: hidden; }
-      #hud .draft-bar-fill { height: 100%; width: 100%; background: #d8a03c; transition: width 0.05s linear; }
       #hud .toast { color: #ffcf6e; font-size: 12px; background: #241a3a; border: 1px solid #4a3a7a; border-radius: 4px; padding: 4px 8px; align-self: flex-start; animation: toast-float 1.4s ease-out forwards; }
       #hud .toast.tide-toast { color: #ff8a8a; background: #2a1414; border-color: #7a3a3a; }
       /* 多资源经济 R6 (client building panel, plan §6): REPLACES the old standalone 「拆除」toggle
-         button — same dark-card treatment as `.draft-panel` (both are event-driven popups at the
-         top of `#hud`). 升级 reuses the warm gold family (`.rally-pick-btn.active`'s hue); 拆除
-         reuses the old `.demolish-btn`'s red family; 取消 is a plain neutral button. */
+         button — an event-driven popup at the top of `#hud`, same dark-card treatment as
+         `.building-panel` below. 升级 reuses the warm gold family (`.rally-pick-btn.active`'s
+         hue); 拆除 reuses the old `.demolish-btn`'s red family; 取消 is a plain neutral button. */
       /* 建筑面板 UX (user feedback): floats next to the clicked building instead of sitting in the
          right-side #hud column. `position: fixed` positions it against the viewport (no ancestor has
          a persistent transform/filter, and #hud's `overflow-y: auto` does not clip fixed descendants),
@@ -152,7 +155,7 @@
       #topbar .menu-btn:hover { background: #2a2248; }
       #topbar .menu-btn.active { background: #2e2350; border-color: #7a5ad8; color: #e8dcff; }
       /* Collapsed by default (JS sets display: none); a small panel once opened, matching
-         .draft-panel's dark-card treatment so the four re-housed buttons read as one group.
+         .building-panel's dark-card treatment so the four re-housed buttons read as one group.
          HUD redesign: now absolutely positioned under the ☰ button (`#topbar` is its containing
          block, set above) instead of flowing inline — opening it must not push the status
          readouts sideways or wrap the bar. `z-index` is an explicit integer (not `auto`) so it
@@ -312,6 +315,23 @@
       #nightide-pause-overlay.show { display: flex; }
       #nightide-pause-overlay .pause-title { font-size: 30px; font-weight: 800; letter-spacing: 4px; color: #dfe4f7; text-shadow: 0 0 14px rgba(159, 211, 255, 0.5), 0 2px 4px #000; }
       #nightide-pause-overlay .pause-subtitle { margin-top: 8px; font-size: 13px; color: #8a93b9; letter-spacing: 1px; }
+      /* HUD 改版：抽卡居中暂停弹窗（docs/plans/nightide/2026-07-23-hud-draft-modal-card-grid-design.md
+         第一节）。遮罩即输入屏障 —— menu/暂停/投降全在下面，modal 打开期间唯一可点的就是三张卡。 */
+      #draft-modal-overlay { position: fixed; inset: 0; z-index: 900; display: flex; align-items: center; justify-content: center; background: rgba(6, 4, 16, 0.65); }
+      #draft-modal-overlay .draft-modal-panel { background: #17123a; border: 1px solid #4a3a7a; border-radius: 10px; padding: 16px 18px; width: min(92vw, 560px); box-shadow: 0 0 40px rgba(0, 0, 0, 0.8); }
+      #draft-modal-overlay .draft-modal-panel.pop { animation: draft-pop 0.25s ease-out; }
+      @keyframes draft-pop { from { transform: scale(0.85); opacity: 0; } to { transform: scale(1); opacity: 1; } }
+      #draft-modal-overlay .draft-modal-title { font-size: 16px; font-weight: 600; color: #ffd76e; text-align: center; margin-bottom: 12px; }
+      #draft-modal-overlay .draft-modal-cards { display: flex; gap: 10px; align-items: stretch; }
+      #draft-modal-overlay .draft-modal-card { flex: 1; display: flex; flex-direction: column; align-items: center; gap: 6px; padding: 10px 8px; background: #1a1633; border: 1px solid #4a3a7a; border-radius: 8px; cursor: pointer; color: #cfd4ea; }
+      #draft-modal-overlay .draft-modal-card:hover { border-color: #ffd76e; box-shadow: 0 0 8px rgba(255, 215, 110, 0.35); }
+      #draft-modal-overlay .draft-modal-card img { width: 56px; height: 56px; object-fit: contain; }
+      #draft-modal-overlay .draft-modal-name { font-size: 13px; font-weight: 600; }
+      #draft-modal-overlay .draft-modal-cost { font-size: 11px; color: #e8d9a0; }
+      #draft-modal-overlay .draft-modal-detail { font-size: 10px; color: #9aa3c9; line-height: 1.5; text-align: left; }
+      /* 倒计时条：保留但天然冻结（modal 打开 = 已暂停，tick 不走），静态满格。 */
+      #draft-modal-overlay .draft-modal-bar { height: 4px; background: #241a3a; border-radius: 2px; margin-top: 12px; overflow: hidden; }
+      #draft-modal-overlay .draft-modal-bar-fill { height: 100%; width: 100%; background: #d8a03c; }
       /* Brief CSS shake on the #game WRAPPER only (render-only, never the Phaser canvas's own
          transform — see ui/tideAlert.ts's doc comment). */
       #game.tide-shake { animation: tide-wrapper-shake 0.4s ease-in-out; }
@@ -357,7 +377,7 @@
       #nightide-history-panel .history-delta { text-align: right; }
       #nightide-history-panel .history-badges { color: #ffd76e; font-size: 11px; text-align: right; }
     </style>
-    <script type="module" crossorigin src="./assets/index-BLgwfIcK.js"></script>
+    <script type="module" crossorigin src="./assets/index-FxqjDENT.js"></script>
   </head>
   <body>
     <div id="app">
