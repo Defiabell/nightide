@@ -23,6 +23,20 @@
       @media (orientation: portrait) and (max-width: 900px) {
         #rotate-hint { display: block; position: fixed; top: 6px; left: 50%; transform: translateX(-50%); z-index: 2000; pointer-events: none; font-size: 12px; color: #ffcf6e; background: rgba(23, 18, 58, 0.9); border: 1px solid #4a3a7a; border-radius: 6px; padding: 4px 10px; white-space: nowrap; }
       }
+      /* Task 6（防守模式客户端接线）: opening mode-select overlay (see src/modeSelect.ts). Attached
+         directly to <body> — a SIBLING of #app, not a descendant — so `#app`'s responsive
+         `transform: scale(...)` (responsiveScale.ts) never affects it, and this rule never touches
+         any #app layout. `position: fixed; inset: 0` covers the full viewport like every other
+         page-level overlay (`#nightide-history-panel` etc.); `display: none` by default so a page
+         load doesn't flash it before `showModeSelectOverlay()` adds `.show`. */
+      #nightide-mode-select { position: fixed; inset: 0; display: none; align-items: center; justify-content: center; background: rgba(6, 7, 15, 0.85); z-index: 1000; }
+      #nightide-mode-select.show { display: flex; }
+      #nightide-mode-select .mode-select-box { display: flex; flex-direction: column; align-items: stretch; gap: 10px; background: #17123a; border: 1px solid #4a3a7a; border-radius: 10px; padding: 26px 32px; min-width: 240px; box-shadow: 0 10px 32px rgba(0, 0, 0, 0.55); }
+      #nightide-mode-select .mode-select-title { font-size: 22px; font-weight: 800; color: #ffcf6e; text-align: center; letter-spacing: 2px; }
+      #nightide-mode-select .mode-select-subtitle { font-size: 13px; color: #9aa3c9; text-align: center; margin-bottom: 6px; }
+      #nightide-mode-select .mode-select-btn { padding: 12px; background: #241a3a; color: #cfd4ea; border: 1px solid #4a3a7a; border-radius: 6px; cursor: pointer; font-size: 15px; font-weight: 600; }
+      #nightide-mode-select .mode-select-btn:hover { background: #2e2350; }
+      #nightide-mode-select .mode-select-defense { color: #ffb3b3; border-color: #7a3a3a; }
       /* HUD redesign — two-zone layout (direct user feedback: "菜单和一些信息能不能放在游戏上方，
          所有的选项都放在右侧有点长，而且不好辨认"): `#battle-column` stacks the new `#topbar`
          (glanceable read-only status + the ☰ 菜单 button) directly above `#game`, so the two share
@@ -379,7 +393,7 @@
       #nightide-history-panel .history-delta { text-align: right; }
       #nightide-history-panel .history-badges { color: #ffd76e; font-size: 11px; text-align: right; }
     </style>
-    <script type="module" crossorigin src="./assets/index-ByKny8YA.js"></script>
+    <script type="module" crossorigin src="./assets/index-CbW2jCR2.js"></script>
   </head>
   <body>
     <div id="app">
