@@ -86,7 +86,10 @@
          into one is the primary space fix), but if content still exceeds the viewport this lets
          the panel scroll internally instead of overflowing the page. Thin, dark-theme-toned
          scrollbar (both the standard and WebKit-specific properties, for cross-browser coverage). */
-      #hud { width: 200px; display: flex; flex-direction: column; gap: 10px; max-height: 100vh; overflow-y: auto; scrollbar-width: thin; scrollbar-color: #4a3a7a #12101f; }
+      /* max-height:100vh 只是无 JS 时的兜底——responsiveScale.ts 的 fitAppToViewport 会把它改写成
+         `vh / scale`（缩放坐标系下的满屏高），否则 transform 缩放后 hud 视觉高只剩 100vh×scale，
+         手机横屏下"菜单很短、下方被遮盖"。overscroll-behavior 防手机上滚 hud 穿透到页面。 */
+      #hud { width: 200px; display: flex; flex-direction: column; gap: 10px; max-height: 100vh; overflow-y: auto; overscroll-behavior: contain; scrollbar-width: thin; scrollbar-color: #4a3a7a #12101f; }
       #hud::-webkit-scrollbar { width: 6px; }
       #hud::-webkit-scrollbar-track { background: #12101f; }
       #hud::-webkit-scrollbar-thumb { background: #4a3a7a; border-radius: 3px; }
@@ -404,7 +407,7 @@
       #nightide-history-panel .history-delta { text-align: right; }
       #nightide-history-panel .history-badges { color: #ffd76e; font-size: 11px; text-align: right; }
     </style>
-    <script type="module" crossorigin src="./assets/index-DOeMfL46.js"></script>
+    <script type="module" crossorigin src="./assets/index-CkpZbgg-.js"></script>
   </head>
   <body>
     <div id="app">
