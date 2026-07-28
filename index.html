@@ -190,6 +190,15 @@
       #topbar .pause-btn:hover { background: #1e2f4d; }
       #topbar .pause-btn.active { background: #2a4a6e; color: #fff; border-color: #6ab3ff; }
       #topbar .pause-btn:disabled { opacity: 0.35; cursor: default; }
+      /* 倍速功能 (direct user feedback: "可以设置一个倍速功能，0.8倍速和 2倍速"): sits right beside
+         .pause-btn (same first-class topbar family, never menu-housed) — a distinct amber/gold hue
+         (matching .topbar-difficulty's badge palette) so it reads as its own control, not a second
+         pause button. `.active` (any non-1x speed) echoes `.pause-btn.active`'s "highlight when the
+         player deviates from the baseline" convention. No `:disabled` rule — this button is never
+         disabled (see hud.ts's `speedBtn` doc comment). */
+      #topbar .speed-btn { padding: 8px; background: #2a2410; color: #ffdb8a; border: 1px solid #7a6224; border-radius: 6px; cursor: pointer; font-size: 13px; text-align: center; font-weight: 600; min-width: 34px; }
+      #topbar .speed-btn:hover { background: #3a3216; }
+      #topbar .speed-btn.active { background: #4a3c14; color: #fff; border-color: #d8b84a; }
       /* HUD redesign: the ☰ 菜单 button moved from `#hud` into `#topbar` (same horizontal strip as
          the status readouts, per direct user feedback) — same dark-panel family as .history-btn,
          `.active` echoes the dropdown's open state the way `.pause-btn.active`/`.rally-pick-btn.active`
@@ -433,7 +442,7 @@
       #nightide-history-panel .history-delta { text-align: right; }
       #nightide-history-panel .history-badges { color: #ffd76e; font-size: 11px; text-align: right; }
     </style>
-    <script type="module" crossorigin src="./assets/index-DywXfZIx.js"></script>
+    <script type="module" crossorigin src="./assets/index-CFAIRzC4.js"></script>
   </head>
   <body>
     <div id="app">
