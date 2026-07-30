@@ -102,7 +102,32 @@
       /* max-height:100vh 只是无 JS 时的兜底——responsiveScale.ts 的 fitAppToViewport 会把它改写成
          `vh / scale`（缩放坐标系下的满屏高），否则 transform 缩放后 hud 视觉高只剩 100vh×scale，
          手机横屏下"菜单很短、下方被遮盖"。overscroll-behavior 防手机上滚 hud 穿透到页面。 */
-      #hud { width: 200px; display: flex; flex-direction: column; gap: 10px; max-height: 100vh; overflow-y: auto; overscroll-behavior: contain; scrollbar-width: thin; scrollbar-color: #4a3a7a #12101f; }
+      /* fix (user report, HUD 数字抖动): `#hud`'s width was a bare 200px, sized for the SHORT
+         early-match "你 60 ｜ 对手 60" gold/兵力 stat lines only. As either side's gold climbs past
+         3 digits (goldCap in `createSandboxConfig` is 9999 — a routinely reachable, sustained
+         state in a long match, not just a rare edge case — see `@nightide/content`'s
+         `goldCap: 9999 * FP`), `.gold-row`'s text (`white-space: normal` by default) wrapped onto a
+         second line the instant it no longer fit the ~182px content width this left the stat rows,
+         growing `.hud-stats`' height and shoving `.cards-row`/every button below it down a line —
+         then back up the moment gold dropped back under the wrap threshold (e.g. spending on a
+         card). That up/down shove IS the reported jitter, verified with a Chromium DOM harness
+         (`.gold-row`'s own `getBoundingClientRect().height` flipping 16px -> 32px exactly at the
+         4th digit, both zh and en). Width, not character spacing, was confirmed as the firing
+         mechanism (a `tabular-nums` fix wouldn't touch a WRAPPING bug), so widening is the direct
+         countermeasure. 200 -> 240px is sized off actually-reachable text, not a guess: the widest
+         REALISTIC line is EN's `Gold — You 9999 | Opponent 9999` (goldCap, sustained) plus a small
+         margin for `SimConfig.goldCap`'s documented one-tick post-cap overshoot from a same-tick
+         kill bounty/harvest credit (`types.ts`'s `goldCap` doc comment) — both measured to fit
+         comfortably inside 240px's ~222px content width with zero clipping, vs. today's ~182px
+         which clips (not just wraps) that same line by over 30px. This does widen every OTHER row
+         in `#hud` by the same 40px too (cards grid / buttons / stance row) — unavoidable, since
+         `#hud`'s own `overflow-y: auto` clips (not just scrolls) any child that's wider than `#hud`
+         ITSELF, confirmed by a harness that widened only `.hud-stats` and watched the overflow get
+         silently clipped at `#hud`'s old 200px edge rather than bleeding visibly past it — so the
+         fix has to land on the shared container, not a scoped child rule. `responsiveScale.ts`'s
+         `fitAppToViewport` measures `#app.offsetWidth` live every fit, so this is zero-risk there
+         (no hardcoded width anywhere in that path — see its own file header). */
+      #hud { width: 240px; display: flex; flex-direction: column; gap: 10px; max-height: 100vh; overflow-y: auto; overscroll-behavior: contain; scrollbar-width: thin; scrollbar-color: #4a3a7a #12101f; }
       #hud::-webkit-scrollbar { width: 6px; }
       #hud::-webkit-scrollbar-track { background: #12101f; }
       #hud::-webkit-scrollbar-thumb { background: #4a3a7a; border-radius: 3px; }
@@ -116,7 +141,13 @@
          (gold/材料/兵力/等级进度) moved into `#hud` (user feedback: 与右侧战斗选项放一起便于看对局),
          so these four are UNSCOPED (no `#topbar` prefix) to keep their color/size in their new #hud
          home. `.hud-stats` (below) is their new container. */
-      #hud .gold-row { font-size: 13px; color: #d8a03c; }
+      /* fix (user report, HUD 数字抖动): `nowrap` is the belt to `#hud`'s 240px suspenders above —
+         240px is sized for the routinely-reachable sustained max (goldCap 9999) plus a small
+         margin, but the sim's own doc comment (`types.ts`'s `goldCap`) allows a further one-tick
+         post-cap overshoot from a same-tick bounty/harvest credit; `nowrap` guarantees that even an
+         unaccounted-for overshoot clips cleanly on ONE line (no visible reflow) rather than wrapping
+         to a second line and reproducing the exact jitter this fix removes. */
+      #hud .gold-row { font-size: 13px; color: #d8a03c; white-space: nowrap; }
       /* 多资源经济 R6 (client material readouts, docs/plans/nightide/2026-07-22-multi-resource-
          economy-plan.md §6): YOUR wood/ore only — see `materialsRow`'s own doc comment in hud.ts.
          Wood-green/ore-slate tones, matching `effects.ts`'s existing `harvested` fx float-text
@@ -128,7 +159,11 @@
          it doesn't read as "more gold info". `.at-cap` flags when the LOCAL player has hit
          maxUnitsPerFaction (production silently paused) — warm/red like the building panel's own
          拆除 button palette below, so it reads as "attention", not just informational. */
-      #hud .units-row { font-size: 13px; color: #9fd3ff; }
+      /* fix (user report, HUD 数字抖动): same `nowrap` safety net as `.gold-row` right above — the
+         army-count line sits in the same `.hud-stats` panel and reflows on exactly the same
+         mechanism, even though its own cap (`maxUnitsPerFaction`, e.g. 60) makes it wrap in
+         practice far less often than gold. */
+      #hud .units-row { font-size: 13px; color: #9fd3ff; white-space: nowrap; }
       #hud .units-row.at-cap { color: #ff8a8a; font-weight: 600; }
       #hud .progress-row { font-size: 12px; color: #9aa3c9; letter-spacing: 1px; }
       #topbar .timer-row { font-size: 12px; color: #9aa3c9; letter-spacing: 0.5px; }
@@ -442,7 +477,7 @@
       #nightide-history-panel .history-delta { text-align: right; }
       #nightide-history-panel .history-badges { color: #ffd76e; font-size: 11px; text-align: right; }
     </style>
-    <script type="module" crossorigin src="./assets/index-qXmR144F.js"></script>
+    <script type="module" crossorigin src="./assets/index-qlpa50n4.js"></script>
   </head>
   <body>
     <div id="app">
