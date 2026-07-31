@@ -356,6 +356,11 @@
       #nightide-tooltip .tt-title { font-weight: 600; color: #ffcf6e; margin-bottom: 2px; }
       #nightide-tooltip .tt-desc { color: #9aa3c9; margin-bottom: 4px; }
       #nightide-tooltip .tt-upgrade-title { color: #d8a03c; margin-top: 6px; font-weight: 600; }
+      /* Barracks tooltip reorder (statFormat.ts's HeaderLine): visually identical to
+         .tt-upgrade-title (same amber/weight/spacing) but a separate class — this one names the
+         produced-unit stat block that now leads a barracks card's tooltip, a different semantic
+         role than an upgrade-preview title even though they should look the same today. */
+      #nightide-tooltip .tt-subhead { color: #d8a03c; margin-top: 6px; font-weight: 600; }
       @keyframes card-shake {
         10%, 90% { transform: translateX(-2px); }
         20%, 80% { transform: translateX(3px); }
@@ -477,7 +482,7 @@
       #nightide-history-panel .history-delta { text-align: right; }
       #nightide-history-panel .history-badges { color: #ffd76e; font-size: 11px; text-align: right; }
     </style>
-    <script type="module" crossorigin src="./assets/index-qlpa50n4.js"></script>
+    <script type="module" crossorigin src="./assets/index-shv8poKp.js"></script>
   </head>
   <body>
     <div id="app">
