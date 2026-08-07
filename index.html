@@ -427,7 +427,8 @@
          每 ~100ms 实时收窄，到点自动选 index 0 并关闭 modal（CSS 数值不变，仅注释更新）。 */
       #draft-modal-overlay .draft-modal-bar { height: 4px; background: #241a3a; border-radius: 2px; margin-top: 12px; overflow: hidden; }
       #draft-modal-overlay .draft-modal-bar-fill { height: 100%; width: 100%; background: #d8a03c; }
-      /* 新手帮助卡（help-overlay spec）——DraftModal 同款视觉族，z-index 890 见 helpOverlay.ts 注释。 */
+      /* 新手帮助卡（help-overlay spec）——DraftModal 同款视觉族，z-index 890 见 helpOverlay.ts 注释。
+         这是 BLOCKING 模态的默认外观（手动从 ☰ 菜单「怎么玩」重看时用这套）——遮罩即输入屏障。 */
       #help-overlay { position: fixed; inset: 0; z-index: 890; display: flex; align-items: center; justify-content: center; background: rgba(6, 4, 16, 0.72); }
       #help-overlay .help-panel { position: relative; background: #17123a; border: 1px solid #4a3a7a; border-radius: 10px; padding: 18px 20px; width: min(92vw, 460px); max-height: 88vh; overflow-y: auto; box-shadow: 0 0 40px rgba(0, 0, 0, 0.8); }
       #help-overlay .help-title { font-size: 17px; font-weight: 700; color: #ffd76e; text-align: center; margin-bottom: 14px; }
@@ -437,6 +438,13 @@
       #help-overlay .help-step-body { font-size: 12px; color: #9aa3c9; line-height: 1.6; }
       #help-overlay .help-go-btn { display: block; margin: 14px auto 0; padding: 8px 26px; font-size: 14px; font-weight: 600; }
       #help-overlay .help-close-btn { position: absolute; top: 8px; right: 10px; background: none; border: none; color: #7c86ad; font-size: 14px; cursor: pointer; }
+      /* fix (CrazyGames rejection, "整体质量不达标" — 首次进入需要点 2 次才可玩，超出 CrazyGames
+         Gameplay requirements 的"最多 1 次"硬性上限): 首次自动弹改走这套非阻塞 toast 外观
+         （`HelpOverlay.show(false)` 加的 `.help-overlay-toast` class，见 helpOverlay.ts 顶部
+         doc comment）——容器整体 `pointer-events: none`，不再有全屏背景遮罩，挪到视口左下角；只有
+         卡片本体 `pointer-events: auto`，玩家选完模式后可以直接点棋盘/卡牌，完全不受这张卡拦截。 */
+      #help-overlay.help-overlay-toast { align-items: flex-end; justify-content: flex-start; background: transparent; padding: 16px; pointer-events: none; }
+      #help-overlay.help-overlay-toast .help-panel { pointer-events: auto; width: min(84vw, 300px); max-height: 46vh; border-color: #6a52b8; box-shadow: 0 6px 28px rgba(0, 0, 0, 0.55); }
       /* Brief CSS shake on the #game WRAPPER only (render-only, never the Phaser canvas's own
          transform — see ui/tideAlert.ts's doc comment). */
       #game.tide-shake { animation: tide-wrapper-shake 0.4s ease-in-out; }
@@ -482,7 +490,7 @@
       #nightide-history-panel .history-delta { text-align: right; }
       #nightide-history-panel .history-badges { color: #ffd76e; font-size: 11px; text-align: right; }
     </style>
-    <script type="module" crossorigin src="./assets/index-B_pz4mHo.js"></script>
+    <script type="module" crossorigin src="./assets/index-DqzHH9Yq.js"></script>
   </head>
   <body>
     <div id="app">
