@@ -170,8 +170,28 @@
          `.gold-row` only for the local undead player) had no rule here at all — same tier/`nowrap`
          treatment as `.gold-row`/`.units-row` right above, but its own hue (#b18cff) matching
          `effects.ts`'s soul-refund float-text tint (0xb18cff) so the HUD row and that float text
-         read as the same resource. */
-      #hud .soul-energy-row { font-size: 13px; color: #b18cff; white-space: nowrap; }
+         read as the same resource.
+
+         User report (魂能的位置太不起眼了，最起码要跟之前金币的位置一样才对 —
+         soul-row-prominence): at the SAME 13px/#b18cff tier as `.gold-row`, this row still read
+         as a minor status chip next to gold, because for an undead player it's the ONLY row in
+         `.hud-stats` that IS a spendable-resource readout (materials/gold are hidden — see
+         `soulEnergyRow`'s doc comment in hud.ts) — it deserves to visually lead the panel the way
+         `.gold-row` leads it for every other faction, not just tie its font-size. Bumped to 15px/
+         700-weight (bigger and heavier than every other `.hud-stats` row, `.gold-row` included)
+         and lightened/saturated within the SAME violet family (#b18cff -> #c9a8ff) rather than
+         switching hues, keeping the soul-row/soul-refund-float-text color kinship the original
+         comment establishes while reading brighter against the `#12101f` panel than gold's
+         `#d8a03c` does (`#c9a8ff`'s naive per-channel luminance ≈181 vs gold's ≈165 — see this
+         file's own header comment for why this repo tracks such numbers instead of eyeballing
+         contrast). `nowrap` is UNCHANGED — still the belt to `#hud`'s 240px suspenders (see the
+         `.gold-row` comment above for the reflow bug this guards); a bigger/bolder font makes the
+         line wider, not taller, so it does not touch `.hud-stats`'s height and cannot reproduce
+         that bug. Deliberately still ≤ `.banner`'s 15px/600-weight (the match-result banner is a
+         RARE, whole-panel-width event; this row is a routine corner of `.hud-stats`) and nowhere
+         near `.lamplight-fill`'s glow treatment, so neither reads as competing for "loudest thing
+         in the HUD". */
+      #hud .soul-energy-row { font-size: 15px; font-weight: 700; color: #c9a8ff; white-space: nowrap; }
       #hud .progress-row { font-size: 12px; color: #9aa3c9; letter-spacing: 1px; }
       #topbar .timer-row { font-size: 12px; color: #9aa3c9; letter-spacing: 0.5px; }
       /* 战局 stat panel in #hud — the four rows stacked vertically (the 200px column can't lay them
@@ -497,7 +517,7 @@
       #nightide-history-panel .history-delta { text-align: right; }
       #nightide-history-panel .history-badges { color: #ffd76e; font-size: 11px; text-align: right; }
     </style>
-    <script type="module" crossorigin src="./assets/index-BHBXLRDh.js"></script>
+    <script type="module" crossorigin src="./assets/index-dwP6UJS8.js"></script>
   </head>
   <body>
     <div id="app">
