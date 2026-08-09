@@ -1,0 +1,34 @@
+Nightide (夜潮) — All Rights Reserved
+
+Copyright (c) 2026 Defiabell. All rights reserved.
+
+This repository holds the compiled build output of the game Nightide, published
+here so it can be served from GitHub Pages. The game's source code is not part
+of this repository and is not licensed by this file.
+
+You may:
+
+  * play the game at https://defiabell.github.io/nightide/ or
+    https://defiabell.itch.io/nightide
+  * keep a personal copy for your own offline play
+
+Without prior written permission you may not:
+
+  * redistribute, rehost, mirror or republish this build, in whole or in part
+  * modify it or create derivative works from it
+  * reuse its art, audio, text or level data in another project
+  * use any of it for commercial purposes
+
+Nothing above is meant to restrict rights you already have under applicable
+law, such as fair use, quotation, or making a personal backup.
+
+To ask for permission, open an issue on this repository.
+
+---
+
+以下为便于阅读的中文摘要，不构成授权条款；如有歧义，以上方英文为准。
+
+本仓库存放的是《夜潮》的构建产物，源码不在此仓库、也不在本协议的授权范围内。
+你可以自由游玩，也可以留一份自用的离线副本；未经事先书面许可，请勿转载、二次
+托管、修改、把其中的美术／音频／文本／关卡数据用于其他项目，或作商业用途。
+需要授权请在本仓库开 issue。
