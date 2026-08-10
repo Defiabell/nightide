@@ -23,6 +23,87 @@
       @media (orientation: portrait) and (max-width: 900px) {
         #rotate-hint { display: block; position: fixed; top: 6px; left: 50%; transform: translateX(-50%); z-index: 2000; pointer-events: none; font-size: 12px; color: #ffcf6e; background: rgba(23, 18, 58, 0.9); border: 1px solid #4a3a7a; border-radius: 6px; padding: 4px 10px; white-space: nowrap; }
       }
+      /* 回放 UI 栏 (Task 6, docs/plans/nightide/2026-08-10-replay-share-design.md): 暂停/倍速/退出
+         三控件 + tick 进度文案, 动态创建（`replayBar.ts`'s `mountReplayBar`）——不在这份静态 HTML
+         里出现, 同 `#nightide-history-panel`/`#draft-modal-overlay` 等其它 JS-建的 overlay 一样,
+         这里只定义样式。挂到 `document.body`（不是 `#app`——`#app` 是横向 `display: flex` 两栏
+         布局〔战斗列 + `#hud`〕, 塞一条横 bar 进去只会被当成第三个 flex item 挤在旁边, 不会铺满
+         顶部）, 靠 `position: fixed; top: 0` 视觉上"钉在 `#app` 顶部", 同 `#nightide-mode-select`/
+         `#rotate-hint` 这类既有 overlay 一样用 viewport 定位而不是 DOM 父子关系去够到"#app 顶部"
+         这个视觉位置。z-index 14: 介于 `.building-panel`(12) 和 `.tide-banner`(15) 之间——比普通
+         对局内容高, 仍低于任何真正的模态（暂停 16／投降 20／战史 30／新手卡 890／抽卡 900／模式
+         选择与提示 1000+）——回放栏是常驻工具条不是模态, 不该挡住其它需要用户回应的弹层。 */
+      /* fix (Task 8 复审第二轮 Important 2, 移动端溢出): 原来这里没有 `flex-wrap`/`max-width`——
+         暂停/倍速/进度/复制/退出五个短元素单行永远够放（桌面 1200px 也没问题），但复审在 360×640
+         实测：`copyTextBestEffort` 两条剪贴板路径都失败后追加的兜底整行（说明文字 + URL 输入框，
+         见下面 `.replay-bar-copy-fallback-row`）会把这条 `position: fixed` 的横条撑到 608px 宽，
+         右边缘越界约 109px——`fixed` 元素没有可滚动的 overflow，用户完全够不到超出屏幕的那部分 URL。
+         `flex-wrap: wrap` 让撑不下的内容换行而不是把整条横条撑宽，`max-width: 100vw` 是双重保险
+         （即使某个未来加的子项自己声明了超宽的固定宽度，横条本身也不会比视口更宽）。 */
+      .replay-bar { position: fixed; top: 0; left: 50%; transform: translateX(-50%); z-index: 14; display: flex; flex-wrap: wrap; max-width: 100vw; align-items: center; gap: 10px; padding: 8px 14px; background: #17123a; border: 1px solid #4a3a7a; border-bottom-left-radius: 8px; border-bottom-right-radius: 8px; box-shadow: 0 6px 22px rgba(0, 0, 0, 0.55); }
+      /* fix (同 `#hud .gold-row`/`.units-row`/`.soul-energy-row` 的"HUD 数字抖动"教训): tick 会随
+         播放持续增长（137 -> 1370 -> 13700……），数字变宽本身没问题, 但没有 `nowrap` 会在恰好变宽
+         的那一刻把整条回放栏挤到第二行——`nowrap` 让它宁可裁切也不换行/不重排。 */
+      .replay-bar-progress { font-size: 13px; color: #9aa3c9; letter-spacing: 0.5px; white-space: nowrap; }
+      /* 暂停：跟 `#topbar .pause-btn` 同一蓝色家族, `.active`（暂停中）复用它"高亮=偏离基线"的惯例。 */
+      .replay-bar-pause { padding: 8px; background: #16223a; color: #9fd3ff; border: 1px solid #345a82; border-radius: 6px; cursor: pointer; font-size: 13px; text-align: center; }
+      .replay-bar-pause:hover { background: #1e2f4d; }
+      .replay-bar-pause.active { background: #2a4a6e; color: #fff; border-color: #6ab3ff; }
+      /* 倍速：跟 `#topbar .speed-btn` 同一琥珀家族, `.active`（当前非默认 2x）同样复用惯例。 */
+      .replay-bar-speed { padding: 8px; background: #2a2410; color: #ffdb8a; border: 1px solid #7a6224; border-radius: 6px; cursor: pointer; font-size: 13px; text-align: center; font-weight: 600; min-width: 34px; }
+      .replay-bar-speed:hover { background: #3a3216; }
+      .replay-bar-speed.active { background: #4a3c14; color: #fff; border-color: #d8b84a; }
+      /* 退出：跟 `#topbar .surrender-btn` 同一红色「离开/终止」家族。 */
+      .replay-bar-exit { padding: 8px; background: #3a1a1a; color: #ffb3b3; border: 1px solid #7a3a3a; border-radius: 6px; cursor: pointer; font-size: 13px; text-align: center; }
+      .replay-bar-exit:hover { background: #4a2222; }
+      /* Task 8（回放分享——裁决：回放栏必须自带一个「复制链接」按钮，见 replayBar.ts
+         `ReplayBarHandle` 的 doc comment）: 地址栏在移动端/itch.io iframe/CrazyGames 嵌入页里都
+         不可见，这颗按钮是那三个渠道唯一的分享出口。复用 `#topbar .history-btn` 同一紫色「菜单
+         动作」家族——跟暂停(蓝)/倍速(琥珀)/退出(红) 三个既有控件的色相都不撞，读作"第四种、不同
+         类别的动作"。stale 之后也不移除（见 `showStale()` 自己的 doc comment），故没有单独的
+         disabled 视觉需要在这里定义。 */
+      .replay-bar-copy { padding: 8px; background: #201a3a; color: #cdadff; border: 1px solid #4a3a7a; border-radius: 6px; cursor: pointer; font-size: 13px; text-align: center; }
+      .replay-bar-copy:hover { background: #2a2248; }
+      /* Task 8 复审 Important 1+2: `writeText`/`execCommand` 都失败时（跨域 iframe 缺 clipboard
+         权限委托的极端情况）揭开的兜底——一句 `replay_copy_failed` 说明 + 一个只读输入框；懒创建/
+         懒显示，见 `replayBar.ts`/`sharePanel.ts` 各自的 doc comment。
+         这个规则故意**不**挂在 `.replay-bar` 底下当子元素——两轮实测都栽在同一个坑里："把一段需要
+         固定尺寸的内容塞进一个自动宽度、又允许换行的 flex 容器"：容器自身宽度是从"每个子项能收缩多
+         窄"反推出来的，无论给这一行加 `flex-basis: 100%` 还是具体像素的 `flex-basis: 280px`，只要
+         没有同时锁死 `flex-shrink`, 反推算法都会先把它（以及它的子项）压到最小内容宽度再去定容器
+         宽度，实测两次都落回 ~150px/~55px 的挤压结果。真正的修复是让这一行完全跳出 `.replay-bar`
+         的 flex 布局——独立挂到 `document.body` 上、自己的 `position: fixed`，宽度用
+         `min(320px, 92vw)` 这类纯粹基于视口的表达式，不受任何父容器的自动宽度反推影响。
+         钉在视口**底部**（`bottom`，不是 `top` 加一个猜测的偏移量）是有意的：`.replay-bar` 自己在
+         窄屏下会因为 `flex-wrap: wrap` 而变成好几行（暂停/倍速/进度/复制/退出各占一行），渲染高度
+         因此是个随屏宽变化、这里没法静态得知的数字——第一版试过 `top: 52px`（假设 bar 只有一行的
+         高度），实测在 360px 宽下 `.replay-bar` 实际渲染到 163px 高，这一行直接叠在了 bar 的中间。
+         钉底部彻底绕开"要不要知道另一个元素的实际高度"这个问题——回放栏在顶部，这一行在底部，两者
+         无论各自多高都不会互相覆盖。`replayBar.ts` 的 `destroy()` 也要显式移除这个节点（它不是
+         `.replay-bar` 的子节点，`el.remove()` 够不到它，见该方法自己的 doc comment）。 */
+      .replay-bar-copy-fallback-row { position: fixed; bottom: 16px; left: 50%; transform: translateX(-50%); z-index: 14; width: min(320px, 92vw); box-sizing: border-box; display: flex; flex-wrap: wrap; align-items: center; gap: 8px; padding: 8px 12px; background: #17123a; border: 1px solid #4a3a7a; border-radius: 8px; box-shadow: 0 6px 22px rgba(0, 0, 0, 0.55); }
+      /* 故意不给 `flex-shrink: 0`（跟 `.share-panel-replay-fallback-note` 保持同一条"允许收缩/换行"
+         规则一致）——这句英文说明单行就有 58 个字符，锁死 `flex-shrink: 0` 会让它坚持要一整行的
+         宽度，把输入框挤出这一行的可视范围之外（实测踩过：input 被推到 x=357，宽度只剩 18px，
+         整个跑出了自己所在这一行的盒子）。允许收缩，文字在窄行里正常换行成两三行，输入框才有机会
+         分到一份看得见、能操作的宽度。 */
+      .replay-bar-copy-fallback-note { font-size: 12px; color: #ffab8a; }
+      .replay-bar-copy-fallback, #nightide-share-panel .share-panel-replay-fallback { flex: 1 1 140px; min-width: 0; padding: 6px 8px; background: #0f0c1f; color: #cfd4ea; border: 1px solid #4a3a7a; border-radius: 6px; font-size: 12px; box-sizing: border-box; }
+      /* 结算面板同款兜底行——跟回放栏那份不同，这里没有"自动宽度父容器"的坑：`#nightide-share-panel
+         .share-panel-box` 是 `flex-direction: column`，直接子元素天生占满整个盒子自己的宽度（那个
+         宽度由图片/按钮行等其它内容撑起来，不是靠这一行自己反推），所以维持简单的行内 flex 布局即可
+         （`flex-wrap: wrap` 只是给极端窄屏一个安全网，正常宽度下说明文字和输入框本就在一行）。 */
+      #nightide-share-panel .share-panel-replay-fallback-row { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
+      #nightide-share-panel .share-panel-replay-fallback-note { font-size: 12px; color: #ffab8a; }
+      /* `showStale()`：整条栏换成的提示文案, 读作"警告", 用跟 `.topbar-difficulty.tier-hard` 同一
+         橙红色而不是 `.replay-bar-exit` 的深红底——这不是一个"离开"按钮, 是纯文字通知, 不该长成
+         按钮的样子（`showStale()` 之后这条栏已经不再有任何控件, 见 `replayBar.ts` 的 doc comment）。 */
+      .replay-bar-stale { font-size: 13px; color: #ffab8a; text-align: center; }
+      /* 全分支复审 Fix 3 —— `showFinished()`：回放正常播完后替代暂停/倍速的那条文案。与
+         `.replay-bar-stale` 同样是纯文字通知（同样不长成按钮的样子），但**故意不同色**：播完是正常
+         结局，用 `.replay-bar-progress` 那条中性的灰蓝，而不是 stale 的橙红警告色——两条文案出现的
+         时机互斥（播完 / 判定失真），颜色是观众区分"这局看完了"与"这局不可信"的第一信号。 */
+      .replay-bar-finished { font-size: 13px; color: #9aa3c9; text-align: center; }
       /* Task 6（防守模式客户端接线）: opening mode-select overlay (see src/modeSelect.ts). Attached
          directly to <body> — a SIBLING of #app, not a descendant — so `#app`'s responsive
          `transform: scale(...)` (responsiveScale.ts) never affects it, and this rule never touches
@@ -41,12 +122,23 @@
          functional difference from the base .mode-select-btn rule above, purely a visual peer of
          `.mode-select-defense`'s own color override so the third choice doesn't look unstyled. */
       #nightide-mode-select .mode-select-fog { color: #b9d6ff; border-color: #3a5a7a; }
+      /* Task 8（回放分享——boot 入口, main.ts）: 打开一条 `#r=` payload 已损坏/不合法的回放链接时，
+         alert-free 地在模式选择遮罩里插一行提示——复用 `.replay-bar-stale` 同一橙红色"这里出了点
+         问题"配色，而不是原生 `alert()` 或另起一套弹层视觉。 */
+      #nightide-mode-select .mode-select-error { font-size: 13px; color: #ffab8a; text-align: center; margin-bottom: 4px; }
       /* 战报分享卡预览浮层（Task 2, src/share/sharePanel.ts；Task 3 升级为「结算面板」自动弹出）：
          与 #nightide-mode-select 完全同款的「挂 body + fixed inset:0 遮罩 + display:none 直到
          .show」惯例，避免加载时闪现。 */
       #nightide-share-panel { position: fixed; inset: 0; display: none; align-items: center; justify-content: center; background: rgba(6, 7, 15, 0.85); z-index: 1000; }
       #nightide-share-panel.show { display: flex; }
-      #nightide-share-panel .share-panel-box { display: flex; flex-direction: column; align-items: stretch; gap: 12px; background: #17123a; border: 1px solid #4a3a7a; border-radius: 10px; padding: 20px; box-shadow: 0 10px 32px rgba(0, 0, 0, 0.55); max-height: 92vh; }
+      /* fix (Task 8 复审第二轮, 同 Important 2 一类问题的竖向版本): `max-height: 92vh` 本来就在
+         这里, 但没配 `overflow-y`——图片+headline+actions 行已经能在矮屏（实测 360×640）下逼近
+         92vh, 追加的兜底行（说明文字+URL 输入框）会直接把输入框整段推到视口外面。这层遮罩
+         (`#nightide-share-panel`) 是 `align-items: center` 把这个盒子纵向居中, 盒子自身既不滚动
+         也没有更外层的滚动容器兜底——`overflow-y: auto` 让盒子在真的顶到 92vh 上限时能在自己内部
+         滚动, 而不是让底部内容永久不可见（同 `.replay-bar` 那次修复解决的是同一类"够不到内容"
+         问题，只是这次是纵向溢出、不是横向撑宽）。 */
+      #nightide-share-panel .share-panel-box { display: flex; flex-direction: column; align-items: stretch; gap: 12px; background: #17123a; border: 1px solid #4a3a7a; border-radius: 10px; padding: 20px; box-shadow: 0 10px 32px rgba(0, 0, 0, 0.55); max-height: 92vh; overflow-y: auto; }
       /* Task 3: headline 行——结果大字（用海报同款金/蓝配色区分胜负）+ 副标题（用时等），置于
          卡面上方，让自动弹出时结果一眼可见，不必等眼睛扫到卡面本身。 */
       #nightide-share-panel .share-panel-headline { text-align: center; }
@@ -61,6 +153,15 @@
       #nightide-share-panel .share-panel-close { color: #ffb3b3; border-color: #7a3a3a; }
       /* Task 3: 「再来一局」——同 hud.ts 里 .rematch-btn 一样用金色强调，是面板里最鼓励点的动作。 */
       #nightide-share-panel .share-panel-rematch { color: #ffd76e; border-color: #7a6a2a; }
+      /* Task 8（回放分享入口）: 「复制回放链接」——金色留给 rematch 自己（面板里最鼓励点的动作），
+         这里换一个同一"鼓励点击"梯队但不同色相的紫，跟 `.share-panel-rematch` 不抢视觉重点，同时
+         跟回放栏自己的 `.replay-bar-copy`（同一紫色家族）读作"同一个功能的两处入口"。disabled 态
+         （payload 超长）复用 `#hud button:disabled` 的透明度惯例。 */
+      #nightide-share-panel .share-panel-replay { color: #b9a0ff; border-color: #5a4a8a; }
+      #nightide-share-panel .share-panel-replay:disabled { opacity: 0.35; cursor: default; }
+      /* disabled 态的解释文案（`replay_too_long`）——静音灰，同 `.mode-select-subtitle` 同一"说明性
+         文字"梯队，不是警示色：这不是"出错了"，只是"这局太长，分享不了"。 */
+      #nightide-share-panel .share-panel-replay-note { font-size: 12px; color: #9aa3c9; text-align: center; }
       /* HUD redesign — two-zone layout (direct user feedback: "菜单和一些信息能不能放在游戏上方，
          所有的选项都放在右侧有点长，而且不好辨认"): `#battle-column` stacks the new `#topbar`
          (glanceable read-only status + the ☰ 菜单 button) directly above `#game`, so the two share
@@ -517,7 +618,7 @@
       #nightide-history-panel .history-delta { text-align: right; }
       #nightide-history-panel .history-badges { color: #ffd76e; font-size: 11px; text-align: right; }
     </style>
-    <script type="module" crossorigin src="./assets/index-lcDGSL09.js"></script>
+    <script type="module" crossorigin src="./assets/index-DIyA6qmd.js"></script>
   </head>
   <body>
     <div id="app">
