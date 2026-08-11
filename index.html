@@ -122,47 +122,10 @@
          functional difference from the base .mode-select-btn rule above, purely a visual peer of
          `.mode-select-defense`'s own color override so the third choice doesn't look unstyled. */
       #nightide-mode-select .mode-select-fog { color: #b9d6ff; border-color: #3a5a7a; }
-      /* 连战 Run 模式 (Task 5): fifth button — same "visual peer, no functional difference from the
-         base .mode-select-btn rule" shape as defense/fog above, tinted with the run feature's own
-         `#c9a8ff` accent (already established by `#nightide-run-bar`/`#nightide-run-summary`). */
-      #nightide-mode-select .mode-select-run { color: #c9a8ff; border-color: #5a4a8a; }
       /* Task 8（回放分享——boot 入口, main.ts）: 打开一条 `#r=` payload 已损坏/不合法的回放链接时，
          alert-free 地在模式选择遮罩里插一行提示——复用 `.replay-bar-stale` 同一橙红色"这里出了点
          问题"配色，而不是原生 `alert()` 或另起一套弹层视觉。 */
       #nightide-mode-select .mode-select-error { font-size: 13px; color: #ffab8a; text-align: center; margin-bottom: 4px; }
-      /* 连战 Run 模式 (docs/plans/nightide/2026-08-11-run-mode-plan.md Task 3): 关卡进度条
-         (src/run/runBar.ts) — 常驻顶部小条，不挡任何交互（pointer-events: none，跟 #rotate-hint
-         同一"提示性、非交互"惯例），只在一趟 run 进行中才被 mountRunBar() 挂上。z-index 低于
-         #nightide-mode-select（1000）——开场遮罩关闭前先被盖住，符合它自己"遮罩关闭前底下已经在跑
-         一局"的既有惯例（见 main.ts 顶部注释）。沿用 #hud 的暗底 + `#c9a8ff` 紫色强调（design 文档
-         §5 的既定配色，未新造），不是 mode-select 系的金/红/蓝。 */
-      #nightide-run-bar { position: fixed; top: 6px; left: 50%; transform: translateX(-50%); z-index: 900; pointer-events: none; background: rgba(23, 18, 58, 0.92); border: 1px solid #5a4a8a; border-radius: 6px; padding: 6px 14px; display: flex; flex-direction: column; align-items: center; gap: 4px; min-width: 220px; }
-      /* 数字变宽（关数/百分比）不会把这行挤换行——同 `.replay-bar-progress`/`.gold-row` 等既有先例
-         的 nowrap 惯例（见各自 doc comment）。 */
-      #nightide-run-bar .run-bar-text { font-size: 12px; color: #c9a8ff; font-weight: 600; white-space: nowrap; }
-      #nightide-run-bar .run-bar-track { width: 100%; height: 4px; background: #241a3a; border-radius: 2px; overflow: hidden; }
-      #nightide-run-bar .run-bar-fill { height: 100%; background: #c9a8ff; border-radius: 2px; transition: width 0.3s ease; }
-      /* 整趟结算面板 (src/run/runSummary.ts) — 与 #nightide-mode-select 完全同款的「挂 body + fixed
-         inset:0 遮罩 + display:none 直到 .show」惯例。 */
-      #nightide-run-summary { position: fixed; inset: 0; display: none; align-items: center; justify-content: center; background: rgba(6, 7, 15, 0.85); z-index: 1000; }
-      #nightide-run-summary.show { display: flex; }
-      #nightide-run-summary .run-summary-box { display: flex; flex-direction: column; align-items: stretch; gap: 10px; background: #17123a; border: 1px solid #5a4a8a; border-radius: 10px; padding: 26px 32px; min-width: 260px; box-shadow: 0 10px 32px rgba(0, 0, 0, 0.55); }
-      #nightide-run-summary .run-summary-title { font-size: 22px; font-weight: 800; color: #c9a8ff; text-align: center; letter-spacing: 2px; }
-      #nightide-run-summary .run-summary-line { font-size: 14px; color: #cfd4ea; text-align: center; white-space: nowrap; }
-      #nightide-run-summary .run-summary-btn { padding: 12px; background: #241a3a; color: #cfd4ea; border: 1px solid #4a3a7a; border-radius: 6px; cursor: pointer; font-size: 15px; font-weight: 600; }
-      #nightide-run-summary .run-summary-btn:hover { background: #2e2350; }
-      /* 「再来一趟」——同 `.share-panel-rematch`/`.mode-select-btn` 系惯例，鼓励点击的动作用金色。 */
-      #nightide-run-summary .run-summary-restart { color: #ffd76e; border-color: #7a6a2a; }
-      /* 连战 关间三选一 (Task 4, BattleScene.ts's `showInterLevelDraft`) — 独立于 `Hud` 自己的
-         `#draft-modal-overlay`（同一 id 复用会把 `Hud` 那份内部引用的 DOM 节点顶掉，见
-         `showInterLevelDraft` 的 doc comment），同款「挂 body + fixed inset:0 遮罩」惯例，视觉沿用
-         `#nightide-run-summary`/`#nightide-mode-select` 同一套暗底 + 边框按钮语言，未新造配色。 */
-      #nightide-run-draft { position: fixed; inset: 0; display: none; align-items: center; justify-content: center; background: rgba(6, 7, 15, 0.85); z-index: 1000; }
-      #nightide-run-draft.show { display: flex; }
-      #nightide-run-draft .run-draft-box { display: flex; flex-direction: column; align-items: stretch; gap: 10px; background: #17123a; border: 1px solid #5a4a8a; border-radius: 10px; padding: 26px 32px; min-width: 260px; box-shadow: 0 10px 32px rgba(0, 0, 0, 0.55); }
-      #nightide-run-draft .run-draft-title { font-size: 16px; font-weight: 700; color: #c9a8ff; text-align: center; margin-bottom: 6px; }
-      #nightide-run-draft .run-draft-btn { padding: 12px; background: #241a3a; color: #cfd4ea; border: 1px solid #4a3a7a; border-radius: 6px; cursor: pointer; font-size: 15px; font-weight: 600; }
-      #nightide-run-draft .run-draft-btn:hover { background: #2e2350; }
       /* 战报分享卡预览浮层（Task 2, src/share/sharePanel.ts；Task 3 升级为「结算面板」自动弹出）：
          与 #nightide-mode-select 完全同款的「挂 body + fixed inset:0 遮罩 + display:none 直到
          .show」惯例，避免加载时闪现。 */
@@ -655,7 +618,7 @@
       #nightide-history-panel .history-delta { text-align: right; }
       #nightide-history-panel .history-badges { color: #ffd76e; font-size: 11px; text-align: right; }
     </style>
-    <script type="module" crossorigin src="./assets/index-DQQ0TfpH.js"></script>
+    <script type="module" crossorigin src="./assets/index-DPy-ufiN.js"></script>
   </head>
   <body>
     <div id="app">
