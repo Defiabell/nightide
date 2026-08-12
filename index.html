@@ -300,6 +300,14 @@
          soul-row-prominence fix above) — the same violet `effects.ts`'s soul-refund float text
          (0xb18cff) already uses, so a raise's on-map fx and this tally read as kin. */
       #hud .raise-count-row { font-size: 13px; color: #b18cff; white-space: nowrap; }
+      /* 亡灵 v3「附身」review ruling (C2 fix follow-up): same shape/size tier as `.raise-count-row`
+         right above (both are "unit-acquisition mechanic tally" rows under the identical
+         local-undead gate — see `hud.ts`'s `possessCountRow` doc comment), but its own hue
+         (#ff2e88) — the exact magenta/crimson `effects.ts`'s `soulSteal` fx already uses for a
+         possess's on-map cue — rather than `.raise-count-row`'s violet, so the tally and its
+         on-map cue read as kin to EACH OTHER, and as visually distinct from the raise pair, the
+         same "two undead mechanics, two colors" split `soulSteal`'s own doc comment argues for. */
+      #hud .possess-count-row { font-size: 13px; color: #ff2e88; white-space: nowrap; }
       #hud .progress-row { font-size: 12px; color: #9aa3c9; letter-spacing: 1px; }
       #topbar .timer-row { font-size: 12px; color: #9aa3c9; letter-spacing: 0.5px; }
       /* 战局 stat panel in #hud — the four rows stacked vertically (the 200px column can't lay them
@@ -625,7 +633,7 @@
       #nightide-history-panel .history-delta { text-align: right; }
       #nightide-history-panel .history-badges { color: #ffd76e; font-size: 11px; text-align: right; }
     </style>
-    <script type="module" crossorigin src="./assets/index-CldKm9RT.js"></script>
+    <script type="module" crossorigin src="./assets/index-CBHfzeMY.js"></script>
   </head>
   <body>
     <div id="app">
