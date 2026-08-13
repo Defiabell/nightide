@@ -122,6 +122,13 @@
          functional difference from the base .mode-select-btn rule above, purely a visual peer of
          `.mode-select-defense`'s own color override so the third choice doesn't look unstyled. */
       #nightide-mode-select .mode-select-fog { color: #b9d6ff; border-color: #3a5a7a; }
+      /* 阶段 2（玩家选阵营 + 敌方阵营随机, docs/plans/nightide/2026-08-14-faction-select-design.md
+         §四）: replaces Task 8's单一「亡灵挑战」button (which never got its own color override,
+         just the base .mode-select-btn styling) — two peer buttons, one per non-default roster,
+         each with its own accent color mirroring the defense/fog pattern above (purple = bone/
+         undead, green = thorn/beast). */
+      #nightide-mode-select .mode-select-roster-undead { color: #c9b3ff; border-color: #5a3a7a; }
+      #nightide-mode-select .mode-select-roster-witch { color: #b3ffc9; border-color: #3a7a4a; }
       /* Task 8（回放分享——boot 入口, main.ts）: 打开一条 `#r=` payload 已损坏/不合法的回放链接时，
          alert-free 地在模式选择遮罩里插一行提示——复用 `.replay-bar-stale` 同一橙红色"这里出了点
          问题"配色，而不是原生 `alert()` 或另起一套弹层视觉。 */
@@ -624,7 +631,7 @@
       #nightide-history-panel .history-delta { text-align: right; }
       #nightide-history-panel .history-badges { color: #ffd76e; font-size: 11px; text-align: right; }
     </style>
-    <script type="module" crossorigin src="./assets/index-gdIgw_H1.js"></script>
+    <script type="module" crossorigin src="./assets/index-CK_-WhsW.js"></script>
   </head>
   <body>
     <div id="app">
